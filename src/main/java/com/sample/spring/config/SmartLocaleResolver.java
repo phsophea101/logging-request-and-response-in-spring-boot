@@ -13,21 +13,34 @@ import java.util.List;
 import java.util.Locale;
 
 public class SmartLocaleResolver extends AcceptHeaderLocaleResolver {
-    @SneakyThrows
+    private static final List<Locale> SUPPORTED_LOCALES = Arrays.asList(new Locale("km"), new Locale("en"), new Locale("kr"));
+    private static final Locale DEFAULT_LOCALE = new Locale("en");
+    private static final String ACCEPT_LANGUAGE = "Accept-Language";
+
     @Override
     public Locale resolveLocale(HttpServletRequest request) {
-        Locale defaultLocale = new Locale("en");
-        List<Locale> supportedLocales = Arrays.asList(new Locale("km"), new Locale("en"), new Locale("kr"));
-        String headerLocale = request.getHeader("Accept-Language");
+        String headerLocale = request.getHeader(ACCEPT_LANGUAGE);
         if (StringUtils.isBlank(headerLocale)) {
-            return defaultLocale;
+            return DEFAULT_LOCALE;
         }
-        this.setSupportedLocales(supportedLocales);
+        this.setSupportedLocales(SUPPORTED_LOCALES);
         List<Locale.LanguageRange> list = Locale.LanguageRange.parse(headerLocale);
         Locale locale = Locale.lookup(list, getSupportedLocales());
         if (ObjectUtils.isEmpty(locale))
-            throw new BizException(BizErrorCode.E0001, String.format(BizErrorCode.E0001.getDescription(), list.get(0)));
+            return DEFAULT_LOCALE;
         return locale;
+    }
+
+    @SneakyThrows
+    public static void validateLocale(HttpServletRequest request) {
+        String headerLocale = request.getHeader(ACCEPT_LANGUAGE);
+        if (ObjectUtils.isEmpty(headerLocale)) {
+            return;
+        }
+        List<Locale.LanguageRange> list = Locale.LanguageRange.parse(headerLocale);
+        Locale locale = Locale.lookup(list, SUPPORTED_LOCALES);
+        if (ObjectUtils.isEmpty(locale))
+            throw new BizException(BizErrorCode.E0001, String.format(BizErrorCode.E0001.getDescription(), list.get(0)));
     }
 
 }

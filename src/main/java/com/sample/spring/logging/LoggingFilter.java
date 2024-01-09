@@ -3,6 +3,7 @@ package com.sample.spring.logging;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sample.spring.concurrent.InheritableContextHolder;
 import com.sample.spring.concurrent.ThreadContextHolder;
+import com.sample.spring.config.SmartLocaleResolver;
 import com.sample.spring.exception.BizException;
 import com.sample.spring.util.ContextUtil;
 import com.sample.spring.util.I18nUtils;
@@ -115,7 +116,8 @@ public class LoggingFilter extends OncePerRequestFilter implements Ordered, Logg
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
+        SmartLocaleResolver.validateLocale(request);
         AceServletRequestWrapper requestWrapper = new AceServletRequestWrapper(request);
         AceServletResponseWrapper responseWrapper = new AceServletResponseWrapper(response);
         ServletContext context = new ServletContext(maxRequest, maxResponse, traceIdLength);
@@ -124,9 +126,9 @@ public class LoggingFilter extends OncePerRequestFilter implements Ordered, Logg
             context.setMethod(requestWrapper.getMethod());
             context.setEndpoint(requestWrapper.getRequestURI());
             context.setQueryParam(requestWrapper.getQueryParam());
-            if (includeRequestHeader)
+            if (Boolean.TRUE.equals(includeRequestHeader))
                 context.setRequestHeader(requestWrapper, excludeRequestHeader);
-            if (includeRequestBody)
+            if (Boolean.TRUE.equals(includeRequestBody))
                 context.setRequestBody(requestWrapper.getContent());
             if (!antPathMatch.isIgnoreRequest(context.getEndpoint())) {
                 log.info(context.buildLogRequest());
@@ -138,9 +140,9 @@ public class LoggingFilter extends OncePerRequestFilter implements Ordered, Logg
         } finally {
             ThreadContextHolder.clear();
             InheritableContextHolder.clear();
-            if (includeResponseHeader)
+            if (Boolean.TRUE.equals(includeResponseHeader))
                 context.setResponseHeader(responseWrapper, excludeResponseHeader);
-            if (includeResponseBody)
+            if (Boolean.TRUE.equals(includeResponseBody))
                 context.setResponseBody(responseWrapper.getContent());
             if (!antPathMatch.isIgnoreResponse(context.getEndpoint())) {
                 log.info(context.buildLogResponse(responseWrapper.getStatus()));

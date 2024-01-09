@@ -24,7 +24,7 @@ public class AceServletRequestWrapper extends HttpServletRequestWrapper {
     private Map<String, String> headers;
     private Map<String, String[]> parameters;
 
-    public AceServletRequestWrapper(HttpServletRequest request) throws IOException {
+    public AceServletRequestWrapper(HttpServletRequest request) {
         super(request);
         this.parameters = new HashMap<>();
         this.headers = new HashMap<>();

@@ -34,7 +34,7 @@ public class ByteArrayInputStreamClientHttpResponse implements ClientHttpRespons
     }
 
     @Override
-    public InputStream getBody() throws IOException {
+    public InputStream getBody() {
         return inputStream;
     }
 

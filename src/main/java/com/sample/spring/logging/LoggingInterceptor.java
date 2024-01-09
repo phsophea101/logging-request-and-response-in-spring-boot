@@ -77,7 +77,7 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
             if (port > 0) builder.append(":").append(port);
             if (StringUtils.isNotEmpty(header)) builder.append(", ").append(header);
             boolean isMaxRequest = ServletContext.truncateBody(body, builder, maxRequest);
-            log.info(uri.getScheme() + "-outgoing request {}", builder.toString());
+            log.info(uri.getScheme() + "-outgoing request {}", builder);
             if (isMaxRequest)
                 log.info("Truncated request body length longer than " + maxRequest);
         } catch (Exception ex) {
@@ -90,8 +90,7 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
         try {
             MultiValueMap<String, String> responseHeader = new LinkedMultiValueMap<>();
             HttpHeaders headers = response.getHeaders();
-            for (Map.Entry<String, List<String>> entry : headers.entrySet())
-                responseHeader.put(entry.getKey(), entry.getValue());
+            responseHeader.putAll(headers);
             String body = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             String header = ServletContext.buildHeader(responseHeader);
             StringBuilder builder = new StringBuilder();
@@ -102,7 +101,7 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
             if (port > 0) builder.append(":").append(port);
             if (StringUtils.isNotEmpty(header)) builder.append(", ").append(header);
             boolean isMaxResponse = ServletContext.truncateBody(body, builder, maxResponse);
-            log.info(uri.getScheme() + "-outgoing response {}", builder.toString());
+            log.info(uri.getScheme() + "-outgoing response {}", builder);
             if (isMaxResponse)
                 log.info("Truncated response body length longer than " + maxResponse);
         } catch (Exception ex) {

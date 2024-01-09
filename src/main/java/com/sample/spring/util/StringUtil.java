@@ -146,7 +146,7 @@ public final class StringUtil extends StringUtils {
 
     public static String random(int tokenLength, String tokenFormat) {
         Assert.isTrue(0 < tokenLength, "Token length can not less then zero");
-        if (StringUtil.isEmpty(tokenFormat)) throw new IllegalArgumentException("Token format is required");
+        if (StringUtils.isEmpty(tokenFormat)) throw new IllegalArgumentException("Token format is required");
         Random random = new SecureRandom();
         StringBuilder msg = new StringBuilder();
         for (int i = 0; i < tokenLength; i++)

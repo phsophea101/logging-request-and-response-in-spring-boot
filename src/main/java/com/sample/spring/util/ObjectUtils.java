@@ -108,21 +108,6 @@ public interface ObjectUtils {
         return (T) SerializationUtils.clone(obj);
     }
 
-    @SuppressWarnings("unchecked")
-    /*static <T> T deepClone(Object object) {
-        try {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-            objectOutputStream.writeObject(object);
-            ByteArrayInputStream bais = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-            ObjectInputStream objectInputStream = new ObjectInputStream(bais);
-            return (T) objectInputStream.readObject();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }*/
-
     static byte[] toByteArray(Object obj) {
         Assert.notNull(obj, "Object for serial to bytes can not be null");
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -131,8 +116,6 @@ public interface ObjectUtils {
             oos.flush();
             return bos.toByteArray();
         } catch (IOException ex) {
-//            LOG.error("Failed to serial object [" + obj.getClass().getSimpleName() + "]", ex);
-//            LOG.error("Message " + ex.getMessage(), ex);
             throw new SerializationException(ex);
         }
     }
@@ -142,8 +125,6 @@ public interface ObjectUtils {
              ObjectInputStream ois = new ObjectInputStream(bis)) {
             return ois.readObject();
         } catch (IOException | ClassNotFoundException ex) {
-//            LOG.error("Failed to deserial bytes to object", ex);
-//            LOG.error("Message " + ex.getMessage(), ex);
             throw new SerializationException(ex);
         }
     }

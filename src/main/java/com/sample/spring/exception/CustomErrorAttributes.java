@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.ServletException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +34,11 @@ public class CustomErrorAttributes extends DefaultErrorAttributes {
         if (exception instanceof BizException) {
             code = ((BizException) exception).getError().getValue();
             message = ((BizException) exception).getDescription();
+        } else if (exception instanceof ServletException) {
+            if (((ServletException) exception).getCause() instanceof BizException) {
+                code = ((BizException) ((ServletException) exception).getCause()).getError().getValue();
+                description = ((BizException) ((ServletException) exception).getCause()).getDescription();
+            }
         } else if (exception instanceof Exception) {
             description = ((Exception) exception).getMessage();
         } else {

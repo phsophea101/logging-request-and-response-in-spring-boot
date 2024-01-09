@@ -36,12 +36,6 @@ public class AceServletResponseWrapper extends HttpServletResponseWrapper {
         return printWriter;
     }
 
-    /*@Override
-    public void flushBuffer() throws IOException {
-        if (cachedServlet != null)
-            cachedServlet.flush();
-    }*/
-
     @Override
     public void setContentLength(int len) {
         if (len > this.content.size())
